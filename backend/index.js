@@ -5,6 +5,11 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Root route (IMPORTANT for Render)
+app.get("/", (req, res) => {
+  res.send("API is running successfully");
+});
+
 //design schema for user
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
@@ -14,8 +19,10 @@ const userSchema = new mongoose.Schema({
 
 //model for user
 const User = mongoose.model("User", userSchema);
+
 // Middleware
 app.use(express.json());
+
 // Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
@@ -42,7 +49,6 @@ app.get("/users", async (req, res) => {
   }
 });
 
-// delete user by name
 app.delete("/users/:username", async (req, res) => {
   try {
     const { username } = req.params;
@@ -56,12 +62,15 @@ app.delete("/users/:username", async (req, res) => {
   }
 });
 
-//update user by name
 app.put("/users/:username", async (req, res) => {
   try {
     const { username } = req.params;
     const { email, password } = req.body;
-    const user = await User.findOneAndUpdate({ username }, { email, password });
+    const user = await User.findOneAndUpdate(
+      { username },
+      { email, password },
+      { new: true },
+    );
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
