@@ -1,0 +1,11 @@
+npm init -y
+index.js
+
+npm i express
+
+.gitignore, .env create
+
+
+npm i mongoose
+
+npm i nodemon
